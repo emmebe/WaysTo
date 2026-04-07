@@ -1,0 +1,297 @@
+:root {
+    --bg: #26140d;
+    --cabinet: #5e2414;
+    --cabinet-dark: #3c150c;
+    --gold: #d8a44b;
+    --gold-dark: #8a5d1d;
+    --screen: #220f0a;
+    --text: #f9e9c9;
+    --muted: #e4c592;
+    --accent: #f8d27f;
+    --danger: #a33f24;
+    --ok: #79c663;
+    --wheel-w: 172px;
+    --card-h: 138px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Trebuchet MS", Arial, sans-serif;
+    background:
+        radial-gradient(circle at 20% 8%, #6a2b17 0, transparent 45%),
+        radial-gradient(circle at 88% 12%, #7f341c 0, transparent 35%),
+        linear-gradient(180deg, #2f120a, #1a0905);
+    color: var(--text);
+    padding: 20px;
+}
+
+.casino-shell {
+    max-width: 1320px;
+    margin: 0 auto;
+    border: 7px solid var(--gold-dark);
+    border-radius: 24px;
+    background: linear-gradient(180deg, #7a3019, var(--cabinet) 30%, var(--cabinet-dark));
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+}
+
+.machine-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 24px;
+    background: linear-gradient(180deg, #8d3a1f, #722c18);
+    border-bottom: 4px solid var(--gold-dark);
+}
+
+.machine-top h1 {
+    margin: 0;
+    font-size: 2rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.machine-top p {
+    margin: 4px 0 0;
+    color: var(--muted);
+}
+
+.constraints-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.machine-body {
+    display: flex;
+    gap: 18px;
+    padding: 20px;
+}
+
+.reel-bank {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    padding: 14px;
+    border-radius: 14px;
+    border: 4px solid var(--gold-dark);
+    background:
+        linear-gradient(180deg, #2f1410, #160905),
+        repeating-linear-gradient(
+            -45deg,
+            rgba(255, 255, 255, 0.04) 0,
+            rgba(255, 255, 255, 0.04) 8px,
+            transparent 8px,
+            transparent 16px
+        );
+    min-width: 0;
+}
+
+.reel {
+    width: var(--wheel-w);
+    min-width: 0;
+}
+
+.reel.hidden {
+    display: none;
+}
+
+.reel-title {
+    margin: 0 0 8px;
+    text-align: center;
+    color: var(--accent);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.window {
+    height: var(--card-h);
+    border-radius: 10px;
+    border: 3px solid #7a5320;
+    background: var(--screen);
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 0 0 2px rgba(216, 164, 75, 0.25);
+}
+
+.window::before,
+.window::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 18px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.window::before {
+    top: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent);
+}
+
+.window::after {
+    bottom: 0;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.5), transparent);
+}
+
+.strip {
+    transition: transform 2s cubic-bezier(0.22, 0.85, 0.2, 1);
+}
+
+.card {
+    height: var(--card-h);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    border: 2px dashed #9d9d9d;
+    background: #c6c6c6;
+    color: #353535;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.82rem;
+    padding: 10px;
+}
+
+.lock-btn {
+    margin-top: 8px;
+    width: 100%;
+    padding: 9px 10px;
+    border: 2px solid #9f6a27;
+    border-radius: 8px;
+    color: #ffe8bd;
+    font-weight: 700;
+    background: linear-gradient(180deg, #5e2a17, #3a170d);
+    cursor: pointer;
+}
+
+.lock-btn.active {
+    border-color: var(--ok);
+    color: #d6ffcc;
+}
+
+.control-panel {
+    width: 220px;
+    border: 4px solid var(--gold-dark);
+    border-radius: 14px;
+    background: linear-gradient(180deg, #502013, #36140c);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.lever-stand {
+    height: 210px;
+    border-radius: 10px;
+    border: 2px solid #774f1a;
+    background: linear-gradient(180deg, #271008, #1a0905);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 20px;
+}
+
+.lever-base {
+    position: absolute;
+    bottom: 10px;
+    width: 74px;
+    height: 16px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #ab6f29, #6f4315);
+}
+
+.lever {
+    width: 12px;
+    height: 128px;
+    border-radius: 999px;
+    transform-origin: bottom center;
+    transform: rotate(0deg);
+    background: linear-gradient(180deg, #d8d8d8, #6a6a6a);
+    cursor: grab;
+    touch-action: none;
+    position: relative;
+    z-index: 2;
+}
+
+.lever:active {
+    cursor: grabbing;
+}
+
+.lever-knob {
+    position: absolute;
+    left: 50%;
+    top: -21px;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid #7a4317;
+    background: radial-gradient(circle at 35% 35%, #ffddb2, #d8742d 65%, #9c4618);
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #6d4616;
+    font-weight: 700;
+    cursor: pointer;
+    color: #ffe8bd;
+}
+
+.btn-spin {
+    background: linear-gradient(180deg, #b74427, #872b17);
+}
+
+.btn-save {
+    background: linear-gradient(180deg, #2f6d57, #214b3e);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.save-status {
+    min-height: 1.25em;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 1080px) {
+    .machine-body {
+        flex-direction: column;
+    }
+
+    .control-panel {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .lever-stand {
+        width: 180px;
+    }
+}

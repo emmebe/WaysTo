@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ways To — Slot Machine Round</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="brand">
+                <h1>Ways To</h1>
+                <p class="tagline">Slot machine mode for in-class ideation rounds.</p>
+            </div>
+            <label class="chaos-toggle">
+                <input type="checkbox" id="chaosToggle" checked aria-describedby="chaosHelp">
+                <span class="chaos-toggle__ui" aria-hidden="true"></span>
+                <span class="chaos-toggle__label">Constraints<span class="plus">+</span></span>
+            </label>
+            <p id="chaosHelp" class="sr-only">When on, the fifth wheel (extra constraints) is visible.</p>
+        </header>
+
+        <main class="machine">
+            <div class="wheels" id="wheels" role="group" aria-label="Card wheels">
+                <!-- Wheels injected by app.js -->
+            </div>
+
+            <div class="controls">
+                <div class="lever-area" id="leverArea">
+                    <div class="lever-slot">
+                        <div class="lever-pivot" id="leverPivot" aria-hidden="true">
+                            <div class="lever-arm" id="leverArm" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Pull to spin">
+                                <div class="lever-knob" id="leverKnob" aria-hidden="true"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="spinBtn">Spin (click)</button>
+                </div>
+                <p class="hint">Drag the lever down to spin, or click the button.</p>
+            </div>
+
+            <div class="save-bar">
+                <button type="button" class="btn btn-save" id="saveBtn">Save this draw</button>
+                <span class="save-status" id="saveStatus" role="status"></span>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Card text in <code>decks-data.js</code>. Save stores locally and optionally syncs to Supabase (<code>supabase-config.js</code>).</p>
+        </footer>
+    </div>
+    <script src="decks-data.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="save-draws.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ways To - Vintage Slot Machine</title>
+    <link rel="stylesheet" href="vintage-slot-machine.css">
+</head>
+<body>
+    <main class="casino-shell">
+        <header class="machine-top">
+            <div>
+                <h1>Ways To</h1>
+                <p>Vintage slot machine mode for fast ideation rounds.</p>
+            </div>
+
+            <label class="constraints-toggle" for="constraintsPlusToggle">
+                <input type="checkbox" id="constraintsPlusToggle" checked>
+                <span>Show Constraints+</span>
+            </label>
+        </header>
+
+        <section class="machine-body">
+            <div class="reel-bank" id="reelBank" aria-label="Card reels"></div>
+
+            <aside class="control-panel">
+                <div class="lever-stand">
+                    <div class="lever-base" aria-hidden="true"></div>
+                    <div
+                        class="lever"
+                        id="lever"
+                        role="slider"
+                        aria-label="Pull lever to spin"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        aria-valuenow="0"
+                        tabindex="0"
+                    >
+                        <span class="lever-knob" aria-hidden="true"></span>
+                    </div>
+                </div>
+
+                <button type="button" id="spinButton" class="btn btn-spin">Spin</button>
+                <button type="button" id="saveButton" class="btn btn-save">Save selected cards</button>
+                <p id="saveStatus" class="save-status" role="status"></p>
+            </aside>
+        </section>
+    </main>
+
+    <script src="decks-data.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="save-draws.js"></script>
+    <script src="vintage-slot-machine.js"></script>
+</body>
+</html>

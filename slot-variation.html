@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ways To - Slot Variation</title>
+    <link rel="stylesheet" href="slot-variation.css">
+</head>
+<body>
+    <main class="machine">
+        <header class="machine-header">
+            <h1>Ways To - Slot Variation</h1>
+            <label class="toggle">
+                <input type="checkbox" id="extraToggle" checked>
+                <span>Show Constraints+</span>
+            </label>
+        </header>
+
+        <section class="slot-layout">
+            <div class="wheels" id="wheels"></div>
+
+            <aside class="lever-panel">
+                <div class="lever-track">
+                    <div class="lever" id="lever" role="slider" aria-label="Pull lever to spin" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <span class="lever-ball" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <button id="spinButton" class="btn primary">Spin</button>
+                <button id="saveButton" class="btn">Save cards</button>
+                <p id="saveMessage" class="save-message"></p>
+            </aside>
+        </section>
+    </main>
+
+    <script src="decks-data.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="save-draws.js"></script>
+    <script src="slot-variation.js"></script>
+</body>
+</html>
