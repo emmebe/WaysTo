@@ -1,7 +1,3 @@
-/**
- * Ways To — shared deck content for the slot machine.
- * Loaded before slot-machine.js
- */
 (function (global) {
     "use strict";
 

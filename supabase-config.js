@@ -1,13 +1,3 @@
-/**
- * Supabase connection for saved draws (optional).
- *
- * 1) Create project at https://supabase.com
- * 2) Run SQL from supabase-schema.sql (new project) or supabase-schema-migrate-from-v1.sql (replacing old jsonb table)
- * 3) Settings → API: copy Project URL and anon public key into the strings below
- *
- * The anon key is safe in the browser if Row Level Security only allows INSERT
- * (see schema file). Do not put the service_role key here.
- */
 (function (global) {
     "use strict";
 

@@ -10,8 +10,13 @@
     --accent: #f8d27f;
     --danger: #a33f24;
     --ok: #79c663;
-    --wheel-w: 172px;
-    --card-h: 138px;
+    --wheel-w: clamp(140px, 20vw, 172px);
+    --card-h: clamp(120px, 18vw, 138px);
+    --spacing: clamp(12px, 2vw, 20px);
+    --gap-small: clamp(8px, 1.5vw, 14px);
+    --font-base: clamp(14px, 2vw, 16px);
+    --font-lg: clamp(1.2rem, 4vw, 2rem);
+    --card-font-size: clamp(0.75rem, 2.5vw, 0.9rem);
 }
 
 * {
@@ -27,14 +32,17 @@ body {
         radial-gradient(circle at 88% 12%, #7f341c 0, transparent 35%),
         linear-gradient(180deg, #2f120a, #1a0905);
     color: var(--text);
-    padding: 20px;
+    padding: clamp(8px, 4vw, 20px);
+    font-size: var(--font-base);
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .casino-shell {
-    max-width: 1320px;
+    max-width: 100%;
+    width: 100%;
     margin: 0 auto;
-    border: 7px solid var(--gold-dark);
-    border-radius: 24px;
+    border: clamp(4px, 1vw, 7px) solid var(--gold-dark);
+    border-radius: clamp(12px, 3vw, 24px);
     background: linear-gradient(180deg, #7a3019, var(--cabinet) 30%, var(--cabinet-dark));
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     overflow: hidden;
@@ -44,15 +52,16 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    padding: 18px 24px;
+    gap: clamp(8px, 2vw, 16px);
+    padding: clamp(12px, 3vw, 18px) clamp(16px, 4vw, 24px);
     background: linear-gradient(180deg, #8d3a1f, #722c18);
-    border-bottom: 4px solid var(--gold-dark);
+    border-bottom: clamp(2px, 0.5vw, 4px) solid var(--gold-dark);
+    flex-wrap: wrap;
 }
 
 .machine-top h1 {
     margin: 0;
-    font-size: 2rem;
+    font-size: var(--font-lg);
     letter-spacing: 0.05em;
     text-transform: uppercase;
 }
@@ -60,29 +69,42 @@ body {
 .machine-top p {
     margin: 4px 0 0;
     color: var(--muted);
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
 }
 
 .constraints-toggle {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: clamp(6px, 1.5vw, 8px);
     color: var(--accent);
     font-weight: 700;
+    font-size: clamp(0.75rem, 1.5vw, 1rem);
+    white-space: nowrap;
 }
 
 .machine-body {
-    display: flex;
-    gap: 18px;
-    padding: 20px;
+    display: grid;
+    grid-template-columns: auto minmax(280px, 1fr);
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "control-panel reel-bank"
+        "control-panel outcome-panel";
+    gap: clamp(10px, 2vw, 18px);
+    padding: clamp(12px, 3vw, 20px);
+}
+
+.control-panel {
+    grid-area: control-panel;
 }
 
 .reel-bank {
+    grid-area: reel-bank;
     display: flex;
-    gap: 10px;
+    gap: clamp(6px, 1.5vw, 10px);
     flex: 1;
-    padding: 14px;
-    border-radius: 14px;
-    border: 4px solid var(--gold-dark);
+    padding: clamp(10px, 2vw, 14px);
+    border-radius: clamp(8px, 2vw, 14px);
+    border: clamp(2px, 0.5vw, 4px) solid var(--gold-dark);
     background:
         linear-gradient(180deg, #2f1410, #160905),
         repeating-linear-gradient(
@@ -93,11 +115,30 @@ body {
             transparent 16px
         );
     min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) var(--cabinet);
+}
+
+.reel-bank::-webkit-scrollbar {
+    height: 6px;
+}
+
+.reel-bank::-webkit-scrollbar-track {
+    background: var(--cabinet);
+    border-radius: 3px;
+}
+
+.reel-bank::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    border-radius: 3px;
 }
 
 .reel {
     width: var(--wheel-w);
-    min-width: 0;
+    min-width: var(--wheel-w);
+    flex-shrink: 0;
 }
 
 .reel.hidden {
@@ -108,15 +149,15 @@ body {
     margin: 0 0 8px;
     text-align: center;
     color: var(--accent);
-    font-size: 0.82rem;
+    font-size: clamp(0.65rem, 1.2vw, 0.82rem);
     text-transform: uppercase;
     letter-spacing: 0.08em;
 }
 
 .window {
     height: var(--card-h);
-    border-radius: 10px;
-    border: 3px solid #7a5320;
+    border-radius: clamp(6px, 1.5vw, 10px);
+    border: clamp(2px, 0.5vw, 3px) solid #7a5320;
     background: var(--screen);
     overflow: hidden;
     position: relative;
@@ -150,10 +191,11 @@ body {
 
 .card {
     height: var(--card-h);
-    padding: 10px;
+    padding: clamp(8px, 2vw, 12px);
     display: flex;
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
 }
 
 .card-placeholder {
@@ -167,20 +209,28 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-size: 0.82rem;
-    padding: 10px;
+    font-size: var(--card-font-size);
+    font-weight: 600;
+    padding: clamp(4px, 1vw, 8px);
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .lock-btn {
-    margin-top: 8px;
+    margin-top: clamp(6px, 1.5vw, 8px);
     width: 100%;
-    padding: 9px 10px;
+    padding: clamp(7px, 1.5vw, 9px) clamp(8px, 1.5vw, 10px);
     border: 2px solid #9f6a27;
     border-radius: 8px;
     color: #ffe8bd;
     font-weight: 700;
     background: linear-gradient(180deg, #5e2a17, #3a170d);
     cursor: pointer;
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
 }
 
 .lock-btn.active {
@@ -189,40 +239,107 @@ body {
 }
 
 .control-panel {
-    width: 220px;
-    border: 4px solid var(--gold-dark);
-    border-radius: 14px;
+    width: 100%;
+    border: clamp(2px, 0.5vw, 4px) solid var(--gold-dark);
+    border-radius: clamp(8px, 2vw, 14px);
     background: linear-gradient(180deg, #502013, #36140c);
-    padding: 14px;
+    padding: clamp(10px, 2vw, 14px);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: clamp(10px, 1.5vw, 14px);
 }
 
-.lever-stand {
-    height: 210px;
+.outcome-panel {
+    grid-area: outcome-panel;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(8px, 1.5vw, 10px);
+    padding: clamp(10px, 2vw, 12px);
+    border-radius: clamp(10px, 2vw, 12px);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.outcome-panel h2 {
+    margin: 0;
+    font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.outcome-list {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(6px, 1.3vw, 10px);
+    list-style: none;
+}
+
+.outcome-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    padding: clamp(8px, 1.5vw, 10px);
     border-radius: 10px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.outcome-item.locked {
+    background: rgba(121, 198, 99, 0.12);
+    border-color: rgba(121, 198, 99, 0.3);
+}
+
+.outcome-item-label {
+    color: var(--muted);
+    font-size: clamp(0.72rem, 1.4vw, 0.86rem);
+    flex: 1 1 auto;
+}
+
+.outcome-item-value {
+    color: var(--text);
+    font-size: clamp(0.82rem, 1.45vw, 1rem);
+    font-weight: 700;
+    text-align: right;
+    max-width: 55%;
+    word-break: break-word;
+}
+
+.outcome-item.locked .outcome-item-value::after {
+    content: " \2022 locked";
+    display: block;
+    color: var(--ok);
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+
+.lever-stand {
+    height: clamp(140px, 20vw, 210px);
+    border-radius: clamp(6px, 1.5vw, 10px);
     border: 2px solid #774f1a;
     background: linear-gradient(180deg, #271008, #1a0905);
     position: relative;
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    padding-bottom: 20px;
+    padding-bottom: clamp(12px, 2vw, 20px);
 }
 
 .lever-base {
     position: absolute;
-    bottom: 10px;
-    width: 74px;
-    height: 16px;
+    bottom: clamp(6px, 1.5vw, 10px);
+    width: clamp(50px, 8vw, 74px);
+    height: clamp(12px, 2vw, 16px);
     border-radius: 999px;
     background: linear-gradient(180deg, #ab6f29, #6f4315);
 }
 
 .lever {
-    width: 12px;
-    height: 128px;
+    width: clamp(8px, 1.2vw, 12px);
+    height: clamp(80px, 15vw, 128px);
     border-radius: 999px;
     transform-origin: bottom center;
     transform: rotate(0deg);
@@ -242,8 +359,8 @@ body {
     left: 50%;
     top: -21px;
     transform: translateX(-50%);
-    width: 36px;
-    height: 36px;
+    width: clamp(24px, 4vw, 36px);
+    height: clamp(24px, 4vw, 36px);
     border-radius: 50%;
     border: 2px solid #7a4317;
     background: radial-gradient(circle at 35% 35%, #ffddb2, #d8742d 65%, #9c4618);
@@ -251,12 +368,13 @@ body {
 
 .btn {
     width: 100%;
-    padding: 10px;
+    padding: clamp(8px, 1.5vw, 10px);
     border-radius: 8px;
     border: 2px solid #6d4616;
     font-weight: 700;
     cursor: pointer;
     color: #ffe8bd;
+    font-size: clamp(0.75rem, 1.5vw, 0.95rem);
 }
 
 .btn-spin {
@@ -276,22 +394,153 @@ body {
     min-height: 1.25em;
     margin: 0;
     color: var(--muted);
-    font-size: 0.9rem;
+    font-size: clamp(0.75rem, 1.5vw, 0.9rem);
 }
 
-@media (max-width: 1080px) {
-    .machine-body {
+/* Mobile styles (0px - 640px) */
+@media (max-width: 640px) {
+    .machine-top {
         flex-direction: column;
+        text-align: center;
+        gap: clamp(8px, 3vw, 12px);
+        padding: clamp(10px, 4vw, 16px) clamp(12px, 5vw, 20px);
+    }
+
+    .machine-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        grid-template-areas:
+            "reel-bank reel-bank"
+            "control-panel outcome-panel";
+        gap: clamp(12px, 4vw, 16px);
+        padding: clamp(10px, 4vw, 16px);
     }
 
     .control-panel {
         width: 100%;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
+        display: flex;
+        flex-direction: column;
+        gap: clamp(10px, 3vw, 14px);
+        padding: clamp(10px, 4vw, 16px);
+        min-width: 0;
+    }
+
+    .outcome-panel {
+        min-width: 0;
     }
 
     .lever-stand {
-        width: 180px;
+        width: 100%;
+        height: clamp(120px, 30vw, 160px);
+    }
+
+    .reel-bank {
+        grid-column: 1 / -1;
+        width: 100%;
+        padding: clamp(8px, 3vw, 12px);
+        gap: clamp(4px, 2vw, 8px);
+    }
+
+    .reel {
+        min-width: clamp(120px, 25vw, 140px);
+        flex: 1 1 auto;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: clamp(4px, 3vw, 8px);
+    }
+
+    .control-panel,
+    .outcome-panel {
+        grid-column: auto;
+    }
+
+    .outcome-panel {
+        width: 100%;
+    }
+}
+
+/* Tablet styles (641px - 1024px) */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .machine-body {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .control-panel {
+        flex: 0 0 200px;
+        flex-direction: column;
+        align-self: flex-start;
+    }
+
+    .reel-bank {
+        flex: 1 1 100%;
+        gap: clamp(6px, 2vw, 10px);
+    }
+
+    .reel {
+        flex: 1 1 auto;
+        min-width: clamp(140px, 22vw, 160px);
+    }
+}
+
+/* Large screens (1025px+) */
+@media (min-width: 1025px) {
+    .casino-shell {
+        max-width: min(1400px, 95vw);
+        margin: 0 auto;
+    }
+
+    .machine-top {
+        justify-content: space-between;
+    }
+
+    .reel-bank {
+        gap: 10px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    body {
+        padding: clamp(4px, 3vw, 8px);
+    }
+
+    .reel-bank {
+        gap: clamp(4px, 2vw, 6px);
+        padding: clamp(6px, 3vw, 10px);
+    }
+
+    .control-panel {
+        gap: clamp(6px, 2vw, 8px);
+        padding: clamp(8px, 3vw, 10px);
+    }
+
+    .reel {
+        min-width: clamp(100px, 20vw, 120px);
+    }
+
+    .card-placeholder {
+        font-size: clamp(0.65rem, 3vw, 0.8rem);
+        padding: clamp(2px, 1vw, 6px);
+    }
+}
+
+/* Large desktop screens */
+@media (min-width: 1400px) {
+    :root {
+        --wheel-w: 172px;
+        --card-h: 138px;
+    }
+
+    .reel-bank {
+        gap: 10px;
     }
 }

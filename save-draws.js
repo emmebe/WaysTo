@@ -1,9 +1,3 @@
-/**
- * Shared save pipeline: always persist on the player's device, then optionally
- * insert one row into Supabase for research (only when Save is clicked).
- *
- * Configure Supabase in supabase-config.js (see comments there and supabase-schema.sql).
- */
 (function (global) {
     "use strict";
 
@@ -136,7 +130,7 @@
 
     /**
      * @param {object} payload - Same shape your pages already build (savedAt, cards, etc.)
-     * @param {{ source: string }} meta - Short id for which UI saved (e.g. "slot_machine")
+     * @param {{ source: string }} meta - Short id for which UI saved (e.g. "vintage")
      * @returns {Promise<{ ok: boolean, local: boolean, remote: boolean, saveCode: string, remoteError?: string }>}
      */
     global.saveWaysToDraw = function (payload, meta) {

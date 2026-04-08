@@ -1,5 +1,3 @@
--- One-shot migration: replaces the older saved_draws table (uuid + cards jsonb)
--- with the flat-column + save_code layout. Export old data first if you need it.
 
 drop policy if exists "saved_draws_anon_insert" on public.saved_draws;
 drop policy if exists "saved_draws_anon_no_select" on public.saved_draws;

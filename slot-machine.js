@@ -1,12 +1,34 @@
 (function () {
     "use strict";
 
-    const CARD_HEIGHT = 138;
+    let CARD_HEIGHT = 138; // Default fallback
     const COPIES = 12;
     const MID_COPY = 5;
     const LEVER_MAX = 62;
     const LEVER_TRIGGER = 40;
     const deckData = globalThis.WAYSTO_DECKS || {};
+
+    // Function to get current card height from a sample card
+    function updateCardHeight() {
+        // Wait a bit for DOM to be fully rendered
+        setTimeout(() => {
+            const sampleCard = document.querySelector('.card');
+            if (sampleCard) {
+                const newHeight = sampleCard.offsetHeight;
+                if (newHeight > 0 && Math.abs(newHeight - CARD_HEIGHT) > 1) {
+                    CARD_HEIGHT = newHeight;
+                    // Re-position all strips with new height
+                    state.reels.forEach(reel => {
+                        if (reel.strip) {
+                            const len = reel.deck.values.length;
+                            const slot = MID_COPY * len + reel.currentIndex;
+                            reel.strip.style.transform = `translateY(${-slot * CARD_HEIGHT}px)`;
+                        }
+                    });
+                }
+            }
+        }, 100);
+    }
 
     const decks = [
         { id: "waysTo", label: "Ways To", values: deckData.waysTo || placeholderCards("Ways To") },
@@ -29,11 +51,8 @@
         spinButton: document.getElementById("spinButton"),
         saveButton: document.getElementById("saveButton"),
         saveStatus: document.getElementById("saveStatus"),
+        outcomeList: document.getElementById("outcomeList"),
     };
-
-    if (!els.reelBank || !els.constraintsPlusToggle || !els.lever || !els.spinButton || !els.saveButton || !els.saveStatus) {
-        return;
-    }
 
     function placeholderCards(prefix) {
         const result = [];
@@ -93,6 +112,30 @@
                 currentIndex,
             });
         });
+        renderOutcome();
+    }
+
+    function renderOutcome() {
+        if (!els.outcomeList) return;
+        els.outcomeList.innerHTML = "";
+
+        state.reels.forEach((reel) => {
+            if (isHidden(reel)) return;
+
+            const item = document.createElement("li");
+            item.className = `outcome-item${reel.locked ? " locked" : ""}`;
+
+            const label = document.createElement("span");
+            label.className = "outcome-item-label";
+            label.textContent = reel.deck.label;
+
+            const value = document.createElement("span");
+            value.className = "outcome-item-value";
+            value.textContent = reel.deck.values[reel.currentIndex];
+
+            item.append(label, value);
+            els.outcomeList.appendChild(item);
+        });
     }
 
     function toggleLock(index) {
@@ -102,6 +145,7 @@
         reel.locked = !reel.locked;
         reel.lockBtn.textContent = reel.locked ? "Locked" : "Unlocked";
         reel.lockBtn.classList.toggle("active", reel.locked);
+        renderOutcome();
     }
 
     function isHidden(reel) {
@@ -124,6 +168,7 @@
         Promise.all(activeSpins).finally(() => {
             state.spinning = false;
             setDisabled(false);
+            renderOutcome();
         });
     }
 
@@ -187,15 +232,9 @@
             return;
         }
 
-        saver(payload, { source: "slot_machine" }).then((result) => {
+        saver(payload, { source: "vintage" }).then((result) => {
             const id = result.saveCode ? " Save ID: " + result.saveCode + "." : "";
-            if (result.remote) {
-                els.saveStatus.textContent = "Saved on this device and in Supabase." + id;
-            } else if (result.remoteSkipped === "supabase_not_configured") {
-                els.saveStatus.textContent = "Saved on this device." + id + " Add Supabase in supabase-config.js to sync.";
-            } else {
-                els.saveStatus.textContent = "Saved on this device." + id + " Could not sync to Supabase.";
-            }
+            els.saveStatus.textContent = "Saved." + id;
         });
     }
 
@@ -243,6 +282,7 @@
         const extraReel = state.reels.find((reel) => reel.deck.id === "constraintsPlus");
         if (!extraReel) return;
         extraReel.reel.classList.toggle("hidden", !state.showConstraintsPlus);
+        renderOutcome();
     }
 
     els.constraintsPlusToggle.addEventListener("change", onConstraintsPlusToggle);
@@ -260,4 +300,14 @@
     });
 
     buildReels();
+    updateCardHeight();
+
+    // Update card height on window resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            updateCardHeight();
+        }, 250); // Debounce resize events
+    });
 })();

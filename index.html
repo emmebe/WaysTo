@@ -3,21 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ways To - Slot Machine</title>
+    <title>Ways To - Vintage Slot Machine</title>
     <link rel="stylesheet" href="slot-machine.css">
 </head>
 <body>
-    <noscript>
-        <p style="padding:12px;margin:0;background:#a33f24;color:#fff;font-family:Arial,sans-serif;">
-            JavaScript is disabled in this preview. Open this file in a browser to use the slot machine.
-        </p>
-    </noscript>
     <main class="casino-shell">
         <header class="machine-top">
             <div>
                 <h1>Ways To</h1>
-                <p>Slot machine mode for fast ideation rounds.</p>
+                <p>Vintage slot machine mode for fast ideation rounds.</p>
             </div>
+
             <label class="constraints-toggle" for="constraintsPlusToggle">
                 <input type="checkbox" id="constraintsPlusToggle" checked>
                 <span>Show Constraints+</span>
@@ -25,34 +21,6 @@
         </header>
 
         <section class="machine-body">
-            <div class="reel-bank" id="reelBank" aria-label="Card reels">
-                <article class="reel">
-                    <h2 class="reel-title">Ways To</h2>
-                    <div class="window"><div class="card"><div class="card-placeholder">Loading cards...</div></div></div>
-                    <button type="button" class="lock-btn" disabled>Unlocked</button>
-                </article>
-                <article class="reel">
-                    <h2 class="reel-title">Users</h2>
-                    <div class="window"><div class="card"><div class="card-placeholder">Loading cards...</div></div></div>
-                    <button type="button" class="lock-btn" disabled>Unlocked</button>
-                </article>
-                <article class="reel">
-                    <h2 class="reel-title">Design limit</h2>
-                    <div class="window"><div class="card"><div class="card-placeholder">Loading cards...</div></div></div>
-                    <button type="button" class="lock-btn" disabled>Unlocked</button>
-                </article>
-                <article class="reel">
-                    <h2 class="reel-title">Audience limit</h2>
-                    <div class="window"><div class="card"><div class="card-placeholder">Loading cards...</div></div></div>
-                    <button type="button" class="lock-btn" disabled>Unlocked</button>
-                </article>
-                <article class="reel">
-                    <h2 class="reel-title">Constraints+</h2>
-                    <div class="window"><div class="card"><div class="card-placeholder">Loading cards...</div></div></div>
-                    <button type="button" class="lock-btn" disabled>Unlocked</button>
-                </article>
-            </div>
-
             <aside class="control-panel">
                 <div class="lever-stand">
                     <div class="lever-base" aria-hidden="true"></div>
@@ -74,9 +42,15 @@
                 <button type="button" id="saveButton" class="btn btn-save">Save selected cards</button>
                 <p id="saveStatus" class="save-status" role="status"></p>
             </aside>
+
+            <div class="reel-bank" id="reelBank" aria-label="Card reels"></div>
+
+            <aside class="outcome-panel" aria-live="polite" aria-label="Current outcome">
+                <h2>Outcome</h2>
+                <ul class="outcome-list" id="outcomeList"></ul>
+            </aside>
         </section>
     </main>
-
     <script src="decks-data.js"></script>
     <script src="supabase-config.js"></script>
     <script src="save-draws.js"></script>

@@ -1,7 +1,3 @@
--- Run this in Supabase → SQL Editor for a new project.
--- If you already had the old jsonb "cards" table, run supabase-schema-migrate-from-v1.sql instead.
--- Then: Settings → API → copy URL + anon key into supabase-config.js
-
 create table if not exists public.saved_draws (
     save_code text primary key,
     created_at timestamptz not null default now(),
