@@ -9,17 +9,16 @@
     const deckData = globalThis.WAYSTO_DECKS || {};
 
     const decks = [
-        { id: "waysTo", label: "Ways To", values: deckData.waysTo || ["Error: No Data"] },
-        { id: "users", label: "Users", values: deckData.users || ["Error: No Data"] },
-        { id: "designLimit", label: "Design limit", values: deckData.designLimit || ["Error: No Data"] },
-        { id: "audienceLimit", label: "Audience limit", values: deckData.audienceLimit || ["Error: No Data"] },
-        { id: "constraintsPlus", label: "Constraints+", values: deckData.constraintsPlus || ["Error: No Data"] },
+        { id: "waysTo", label: "Ways To", values: deckData.waysTo || ["Error"] },
+        { id: "users", label: "Users", values: deckData.users || ["Error"] },
+        { id: "designLimit", label: "Design limit", values: deckData.designLimit || ["Error"] },
+        { id: "audienceLimit", label: "Audience limit", values: deckData.audienceLimit || ["Error"] },
+        { id: "constraintsPlus", label: "Constraints+", values: deckData.constraintsPlus || ["Error"] },
     ];
 
-    const state = { reels: [], spinning: false, showConstraintsPlus: true };
+    const state = { reels: [], spinning: false };
     const els = {
         reelBank: document.getElementById("reelBank"),
-        constraintsPlusToggle: document.getElementById("constraintsPlusToggle"),
         lever: document.getElementById("lever"),
         spinButton: document.getElementById("spinButton"),
         saveButton: document.getElementById("saveButton"),
@@ -28,21 +27,26 @@
         charCount: document.getElementById("charCount"),
     };
 
+    // Both icons now included and ALWAYS present in the DOM
+    const lockedIcon = `<svg class="lock-icon locked-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>`;
+    const unlockedIcon = `<svg class="lock-icon unlocked-icon" viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/></svg>`;
+
     function buildReels() {
         els.reelBank.innerHTML = "";
         state.reels = [];
         decks.forEach((deck, index) => {
-            const reel = document.createElement("article");
-            reel.className = "reel";
-            if (deck.id === "constraintsPlus" && !state.showConstraintsPlus) reel.classList.add("hidden");
+            const reelEl = document.createElement("article");
+            reelEl.className = "reel";
 
-            reel.innerHTML = `
-                <h2 class="reel-title">${deck.label}</h2>
+            reelEl.innerHTML = `
+                <button type="button" class="reel-toggle-btn active" id="btn-${deck.id}">
+                    <span class="reel-title-text">${deck.label}</span>
+                    <div class="icon-container">${lockedIcon}${unlockedIcon}</div>
+                </button>
                 <div class="window initial"><div class="strip"></div></div>
-                <button type="button" class="lock-btn">Unlocked</button>
             `;
 
-            const strip = reel.querySelector(".strip");
+            const strip = reelEl.querySelector(".strip");
             for (let c = 0; c < COPIES; c++) {
                 deck.values.forEach(v => {
                     const card = document.createElement("div");
@@ -56,28 +60,32 @@
             const currentIndex = Math.floor(Math.random() * len);
             strip.style.transform = `translateY(${- (MID_COPY * len + currentIndex) * CARD_HEIGHT}px)`;
 
-            const lockBtn = reel.querySelector(".lock-btn");
-            lockBtn.onclick = () => {
-                if (state.reels[index].locked || !state.spinning) {
-                    state.reels[index].locked = !state.reels[index].locked;
-                    lockBtn.textContent = state.reels[index].locked ? "Locked" : "Unlocked";
-                    lockBtn.classList.toggle("active", state.reels[index].locked);
-                }
+            const toggleBtn = reelEl.querySelector(".reel-toggle-btn");
+            toggleBtn.onclick = () => {
+                const r = state.reels[index];
+                r.hidden = !r.hidden;
+                r.locked = r.hidden; // Auto-lock if hidden
+                
+                reelEl.classList.toggle("hidden-reel", r.hidden);
+                // Class change for CSS to toggle icons
+                toggleBtn.classList.toggle("not-active", r.hidden);
             };
 
-            els.reelBank.appendChild(reel);
-            state.reels.push({ deck, strip, lockBtn, locked: false, currentIndex, direction: index % 2 === 0 ? 1 : -1 });
+            els.reelBank.appendChild(reelEl);
+            state.reels.push({ 
+                deck, strip, reelEl, toggleBtn,
+                locked: false, hidden: false, 
+                currentIndex, direction: index % 2 === 0 ? 1 : -1 
+            });
         });
     }
 
     function spinAll() {
         if (state.spinning) return;
-        
-        // REMOVE LOGOS ON FIRST SPIN
         document.querySelectorAll('.window.initial').forEach(el => el.classList.remove('initial'));
 
         const spins = state.reels.map(reel => {
-            if (reel.locked || (reel.deck.id === "constraintsPlus" && !state.showConstraintsPlus)) return Promise.resolve();
+            if (reel.locked || reel.hidden) return Promise.resolve();
             return spinReel(reel);
         });
 
@@ -110,7 +118,7 @@
         });
     }
 
-    // Lever Logic
+    // Lever Controls
     let dragging = false, startY = 0, currentAngle = 0;
     function setAngle(a) {
         currentAngle = Math.max(0, Math.min(LEVER_MAX, a));
