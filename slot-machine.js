@@ -8,39 +8,15 @@
     const LEVER_TRIGGER = 40;
     const deckData = globalThis.WAYSTO_DECKS || {};
 
-    function updateCardHeight() {
-        setTimeout(() => {
-            const sampleCard = document.querySelector('.card');
-            if (sampleCard) {
-                const newHeight = sampleCard.offsetHeight;
-                if (newHeight > 0 && Math.abs(newHeight - CARD_HEIGHT) > 1) {
-                    CARD_HEIGHT = newHeight;
-                    state.reels.forEach(reel => {
-                        if (reel.strip) {
-                            const len = reel.deck.values.length;
-                            const slot = MID_COPY * len + reel.currentIndex;
-                            reel.strip.style.transform = `translateY(${-slot * CARD_HEIGHT}px)`;
-                        }
-                    });
-                }
-            }
-        }, 100);
-    }
-
     const decks = [
-        { id: "waysTo", label: "Ways To", values: deckData.waysTo || placeholderCards("Ways To") },
-        { id: "users", label: "Users", values: deckData.users || placeholderCards("User") },
-        { id: "designLimit", label: "Design limit", values: deckData.designLimit || placeholderCards("Design limit") },
-        { id: "audienceLimit", label: "Audience limit", values: deckData.audienceLimit || placeholderCards("Audience limit") },
-        { id: "constraintsPlus", label: "Constraints+", values: deckData.constraintsPlus || placeholderCards("Constraint+") },
+        { id: "waysTo", label: "Ways To", values: deckData.waysTo || ["Error: No Data"] },
+        { id: "users", label: "Users", values: deckData.users || ["Error: No Data"] },
+        { id: "designLimit", label: "Design limit", values: deckData.designLimit || ["Error: No Data"] },
+        { id: "audienceLimit", label: "Audience limit", values: deckData.audienceLimit || ["Error: No Data"] },
+        { id: "constraintsPlus", label: "Constraints+", values: deckData.constraintsPlus || ["Error: No Data"] },
     ];
 
-    const state = {
-        reels: [],
-        spinning: false,
-        showConstraintsPlus: true,
-    };
-
+    const state = { reels: [], spinning: false, showConstraintsPlus: true };
     const els = {
         reelBank: document.getElementById("reelBank"),
         constraintsPlusToggle: document.getElementById("constraintsPlusToggle"),
@@ -52,238 +28,101 @@
         charCount: document.getElementById("charCount"),
     };
 
-    function placeholderCards(prefix) {
-        const result = [];
-        for (let i = 1; i <= 24; i++) {
-            result.push(prefix + " placeholder " + String(i).padStart(2, "0"));
-        }
-        return result;
-    }
-
     function buildReels() {
         els.reelBank.innerHTML = "";
         state.reels = [];
-
         decks.forEach((deck, index) => {
             const reel = document.createElement("article");
             reel.className = "reel";
-            if (deck.id === "constraintsPlus" && !state.showConstraintsPlus) {
-                reel.classList.add("hidden");
-            }
+            if (deck.id === "constraintsPlus" && !state.showConstraintsPlus) reel.classList.add("hidden");
 
-            const direction = index % 2 === 0 ? 1 : -1;
             reel.innerHTML = `
                 <h2 class="reel-title">${deck.label}</h2>
-                <div class="window initial">
-                    <div class="strip"></div>
-                </div>
+                <div class="window initial"><div class="strip"></div></div>
                 <button type="button" class="lock-btn">Unlocked</button>
             `;
 
             const strip = reel.querySelector(".strip");
             for (let c = 0; c < COPIES; c++) {
-                deck.values.forEach((value) => {
+                deck.values.forEach(v => {
                     const card = document.createElement("div");
                     card.className = "card";
-                    card.innerHTML = `<div class="card-placeholder">${value}</div>`;
+                    card.innerHTML = `<div class="card-placeholder">${v}</div>`;
                     strip.appendChild(card);
                 });
             }
 
             const len = deck.values.length;
             const currentIndex = Math.floor(Math.random() * len);
-            const slot = MID_COPY * len + currentIndex;
-            strip.style.transform = `translateY(${-slot * CARD_HEIGHT}px)`;
+            strip.style.transform = `translateY(${- (MID_COPY * len + currentIndex) * CARD_HEIGHT}px)`;
 
             const lockBtn = reel.querySelector(".lock-btn");
-            lockBtn.addEventListener("click", () => toggleLock(index));
+            lockBtn.onclick = () => {
+                if (state.reels[index].locked || !state.spinning) {
+                    state.reels[index].locked = !state.reels[index].locked;
+                    lockBtn.textContent = state.reels[index].locked ? "Locked" : "Unlocked";
+                    lockBtn.classList.toggle("active", state.reels[index].locked);
+                }
+            };
 
             els.reelBank.appendChild(reel);
-            state.reels.push({
-                deck,
-                index,
-                direction,
-                reel,
-                strip,
-                lockBtn,
-                locked: false,
-                currentIndex,
-            });
+            state.reels.push({ deck, strip, lockBtn, locked: false, currentIndex, direction: index % 2 === 0 ? 1 : -1 });
         });
-    }
-
-    function toggleLock(index) {
-        const reel = state.reels[index];
-        if (!reel || isHidden(reel)) return;
-
-        reel.locked = !reel.locked;
-        reel.lockBtn.textContent = reel.locked ? "Locked" : "Unlocked";
-        reel.lockBtn.classList.toggle("active", reel.locked);
-    }
-
-    function isHidden(reel) {
-        return reel.deck.id === "constraintsPlus" && !state.showConstraintsPlus;
     }
 
     function spinAll() {
         if (state.spinning) return;
+        
+        // REMOVE LOGOS ON FIRST SPIN
+        document.querySelectorAll('.window.initial').forEach(el => el.classList.remove('initial'));
 
-        const activeSpins = [];
-        state.reels.forEach((reel) => {
-            if (isHidden(reel) || reel.locked) return;
-            activeSpins.push(spinReel(reel));
+        const spins = state.reels.map(reel => {
+            if (reel.locked || (reel.deck.id === "constraintsPlus" && !state.showConstraintsPlus)) return Promise.resolve();
+            return spinReel(reel);
         });
 
-        if (!activeSpins.length) return;
-
-        document.querySelectorAll('.window.initial').forEach(windowEl => windowEl.classList.remove('initial'));
-
         state.spinning = true;
-        setDisabled(true);
-        Promise.all(activeSpins).finally(() => {
+        els.spinButton.disabled = true;
+        Promise.all(spins).finally(() => {
             state.spinning = false;
-            setDisabled(false);
+            els.spinButton.disabled = false;
         });
     }
 
     function spinReel(reel) {
         const len = reel.deck.values.length;
-        const start = reel.currentIndex;
-        let end = Math.floor(Math.random() * len);
-        if (end === start) {
-            end = (end + 1) % len;
-        }
-
+        const end = Math.floor(Math.random() * len);
         const turns = 3 + Math.floor(Math.random() * 3);
-        const directionalDelta = reel.direction === 1
-            ? (end - start + len) % len
-            : (start - end + len) % len;
-        const travel = reel.direction * (turns * len + directionalDelta);
-        const startSlot = MID_COPY * len + start;
-        const endSlot = startSlot + travel;
-        const ms = 1800 + Math.floor(Math.random() * 900);
+        const travel = reel.direction * (turns * len + ((end - reel.currentIndex + len) % len));
+        const endSlot = (MID_COPY * len + reel.currentIndex) + travel;
+        const ms = 2000 + Math.floor(Math.random() * 1000);
 
-        reel.strip.style.transition = "none";
-        reel.strip.style.transform = `translateY(${-startSlot * CARD_HEIGHT}px)`;
+        reel.strip.style.transition = `transform ${ms}ms cubic-bezier(0.22, 0.85, 0.2, 1)`;
+        reel.strip.style.transform = `translateY(${-endSlot * CARD_HEIGHT}px)`;
 
-        return new Promise((resolve) => {
-            requestAnimationFrame(() => {
-                reel.strip.style.transition = `transform ${ms}ms cubic-bezier(0.22, 0.85, 0.2, 1)`;
-                reel.strip.style.transform = `translateY(${-endSlot * CARD_HEIGHT}px)`;
-
-                window.setTimeout(() => {
-                    reel.strip.style.transition = "none";
-                    reel.currentIndex = end;
-                    const restSlot = MID_COPY * len + end;
-                    reel.strip.style.transform = `translateY(${-restSlot * CARD_HEIGHT}px)`;
-                    resolve();
-                }, ms + 120);
-            });
+        return new Promise(resolve => {
+            setTimeout(() => {
+                reel.strip.style.transition = "none";
+                reel.currentIndex = end;
+                reel.strip.style.transform = `translateY(${- (MID_COPY * len + end) * CARD_HEIGHT}px)`;
+                resolve();
+            }, ms + 100);
         });
     }
 
-    function setDisabled(disabled) {
-        els.spinButton.disabled = disabled;
-    }
-
-    function saveSelectedCards() {
-        const payload = {
-            savedAt: new Date().toISOString(),
-            constraintsPlusOn: state.showConstraintsPlus,
-            note: els.ideationNote.value,
-            cards: {},
-        };
-
-        state.reels.forEach((reel) => {
-            if (isHidden(reel)) return;
-            payload.cards[reel.deck.id] = reel.deck.values[reel.currentIndex];
-        });
-
-        els.saveStatus.textContent = "Saving...";
-
-        const saver = globalThis.saveWaysToDraw;
-        if (typeof saver !== "function") {
-            els.saveStatus.textContent = "Save module missing; include save-draws.js.";
-            return;
-        }
-
-        saver(payload, { source: "vintage" }).then((result) => {
-            const id = result.saveCode ? " Save ID: " + result.saveCode + "." : "";
-            els.saveStatus.textContent = "Saved." + id;
-        });
-    }
-
-    let dragging = false;
-    let startY = 0;
-    let currentAngle = 0;
-
-    function setLeverAngle(angle) {
-        currentAngle = Math.max(0, Math.min(LEVER_MAX, angle));
+    // Lever Logic
+    let dragging = false, startY = 0, currentAngle = 0;
+    function setAngle(a) {
+        currentAngle = Math.max(0, Math.min(LEVER_MAX, a));
         els.lever.style.transform = `rotate(${currentAngle}deg)`;
-        const value = Math.round((currentAngle / LEVER_MAX) * 100);
-        els.lever.setAttribute("aria-valuenow", String(value));
     }
 
-    function onLeverDown(event) {
-        if (state.spinning) return;
-        dragging = true;
-        startY = event.clientY;
-        els.lever.setPointerCapture(event.pointerId);
-    }
+    els.lever.onpointerdown = e => { if (!state.spinning) { dragging = true; startY = e.clientY; els.lever.setPointerCapture(e.pointerId); } };
+    els.lever.onpointermove = e => { if (dragging) setAngle((e.clientY - startY) * 0.8); };
+    els.lever.onpointerup = () => { if (dragging) { if (currentAngle >= LEVER_TRIGGER) spinAll(); dragging = false; setAngle(0); } };
 
-    function onLeverMove(event) {
-        if (!dragging || state.spinning) return;
-        const dy = event.clientY - startY;
-        setLeverAngle(dy * 0.95);
-    }
-
-    function onLeverUp(event) {
-        if (!dragging) return;
-        dragging = false;
-        try {
-            els.lever.releasePointerCapture(event.pointerId);
-        } catch (error) {}
-
-        if (currentAngle >= LEVER_TRIGGER) {
-            spinAll();
-        }
-        setLeverAngle(0);
-    }
-
-    function onConstraintsPlusToggle() {
-        state.showConstraintsPlus = els.constraintsPlusToggle.checked;
-        const extraReel = state.reels.find((reel) => reel.deck.id === "constraintsPlus");
-        if (!extraReel) return;
-        extraReel.reel.classList.toggle("hidden", !state.showConstraintsPlus);
-    }
-
-    els.ideationNote.addEventListener("input", () => {
-        const len = els.ideationNote.value.length;
-        els.charCount.textContent = `${len} / 500`;
-    });
-
-    els.constraintsPlusToggle.addEventListener("change", onConstraintsPlusToggle);
-    els.spinButton.addEventListener("click", spinAll);
-    els.saveButton.addEventListener("click", saveSelectedCards);
-    els.lever.addEventListener("pointerdown", onLeverDown);
-    els.lever.addEventListener("pointermove", onLeverMove);
-    els.lever.addEventListener("pointerup", onLeverUp);
-    els.lever.addEventListener("pointercancel", onLeverUp);
-    els.lever.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            spinAll();
-        }
-    });
+    els.spinButton.onclick = spinAll;
+    els.ideationNote.oninput = () => { els.charCount.textContent = `${els.ideationNote.value.length} / 500`; };
 
     buildReels();
-    updateCardHeight();
-
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            updateCardHeight();
-        }, 250);
-    });
 })();

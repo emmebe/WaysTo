@@ -8,47 +8,46 @@
 </head>
 <body>
     <main class="casino-shell">
-        <header class="machine-top">
-            <div>
-                <h1>Ways To</h1>
-                <p>Vintage slot machine mode for fast ideation rounds.</p>
+        <header class="machine-header">
+            <div class="bulb-frame">
+                <div class="bulb-row top"></div>
+                <div class="bulb-row bottom"></div>
+                <div class="bulb-column left"></div>
+                <div class="bulb-column right"></div>
             </div>
-
+            <div class="header-content">
+                <h1>Ways To</h1>
+                <p>Vintage Ideation Mode</p>
+            </div>
             <label class="constraints-toggle" for="constraintsPlusToggle">
                 <input type="checkbox" id="constraintsPlusToggle" checked>
-                <span>Show Constraints+</span>
+                <span>Constraints+</span>
             </label>
         </header>
 
         <section class="machine-body">
+            <div class="reel-bank" id="reelBank" aria-label="Card reels"></div>
+
             <aside class="control-panel">
                 <div class="lever-stand">
                     <div class="lever-base" aria-hidden="true"></div>
-                    <div
-                        class="lever"
-                        id="lever"
-                        role="slider"
-                        aria-label="Pull lever to spin"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                        aria-valuenow="0"
-                        tabindex="0"
-                    >
-                        <span class="lever-knob" aria-hidden="true"></span>
+                    <div class="lever" id="lever" role="slider" aria-label="Pull lever" tabindex="0">
+                        <span class="lever-knob"></span>
                     </div>
                 </div>
-
-                <button type="button" id="spinButton" class="btn btn-spin">Spin</button>
-                <button type="button" id="saveButton" class="btn btn-save">Save selected cards</button>
-                <p id="saveStatus" class="save-status" role="status"></p>
+                <div class="action-stack">
+                    <button type="button" id="spinButton" class="btn btn-spin">SPIN</button>
+                    <button type="button" id="saveButton" class="btn btn-save">SAVE DRAW</button>
+                    <p id="saveStatus" class="save-status"></p>
+                </div>
             </aside>
 
-            <div class="reel-bank" id="reelBank" aria-label="Card reels"></div>
-
             <aside class="outcome-panel">
-                <h2>Brainstorming Notes</h2>
+                <div class="outcome-header">
+                    <h2>Brainstorming Notes</h2>
+                </div>
                 <div class="note-container">
-                    <textarea id="ideationNote" placeholder="Type your ideas here..." maxlength="500"></textarea>
+                    <textarea id="ideationNote" placeholder="Write your ideas here..." maxlength="500"></textarea>
                     <div id="charCount">0 / 500</div>
                 </div>
             </aside>

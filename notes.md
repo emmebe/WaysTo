@@ -12,7 +12,3 @@ get rid of word title, the buttons go above so they dont disappear, "keep" outco
 so title + lock/unlock button, and then "keep" button gets an unpressed/pressed state and that's what locks the outcome 
 
 text box instead of outcome box for them to brainstorm/ideate in the actual browser (ideas) - savable separate from the outcomes - refresh upon respin, auto save to left, when page refresh or closed delete
-
-get rid of lime green box
-
-rework to be REALLY slot machiney, flashier w/ css styling to look like slot machine
