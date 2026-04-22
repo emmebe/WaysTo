@@ -39,15 +39,9 @@
     }
 
     function cardText(value) {
-        if (value == null) {
-            return "";
-        }
-        if (typeof value === "string") {
-            return value;
-        }
-        if (typeof value === "object" && value.text != null) {
-            return String(value.text);
-        }
+        if (value == null) return "";
+        if (typeof value === "string") return value;
+        if (typeof value === "object" && value.text != null) return String(value.text);
         return String(value);
     }
 
@@ -70,9 +64,7 @@
         } catch (_) {
             list = [];
         }
-        if (!Array.isArray(list)) {
-            list = [];
-        }
+        if (!Array.isArray(list)) list = [];
         list.push(record);
         global.localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
     }
@@ -85,8 +77,7 @@
                 : typeof payload.chaosIncluded === "boolean"
                   ? payload.chaosIncluded
                   : null;
-        const chaosIncluded = typeof payload.chaosIncluded === "boolean" ? payload.chaosIncluded : null;
-
+        
         return {
             save_code: meta.saveCode,
             saved_at: payload.savedAt,
@@ -97,7 +88,7 @@
             audience_limit: flat.audience_limit || "[empty]",
             constraints_plus: flat.constraints_plus,
             constraints_plus_on: constraintsPlus,
-            chaos_included: chaosIncluded,
+            ideation_note: payload.note || "", // Added payload note here
         };
     }
 
@@ -123,7 +114,6 @@
             }
         });
     }
-
 
     global.saveWaysToDraw = function (payload, meta) {
         const saveCode = newSaveCode((meta && meta.source) || "unknown");

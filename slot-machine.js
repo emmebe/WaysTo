@@ -48,7 +48,8 @@
         spinButton: document.getElementById("spinButton"),
         saveButton: document.getElementById("saveButton"),
         saveStatus: document.getElementById("saveStatus"),
-        outcomeList: document.getElementById("outcomeList"),
+        ideationNote: document.getElementById("ideationNote"),
+        charCount: document.getElementById("charCount"),
     };
 
     function placeholderCards(prefix) {
@@ -109,30 +110,6 @@
                 currentIndex,
             });
         });
-        renderOutcome();
-    }
-
-    function renderOutcome() {
-        if (!els.outcomeList) return;
-        els.outcomeList.innerHTML = "";
-
-        state.reels.forEach((reel) => {
-            if (isHidden(reel)) return;
-
-            const item = document.createElement("li");
-            item.className = `outcome-item${reel.locked ? " locked" : ""}`;
-
-            const label = document.createElement("span");
-            label.className = "outcome-item-label";
-            label.textContent = reel.deck.label;
-
-            const value = document.createElement("span");
-            value.className = "outcome-item-value";
-            value.textContent = reel.deck.values[reel.currentIndex];
-
-            item.append(label, value);
-            els.outcomeList.appendChild(item);
-        });
     }
 
     function toggleLock(index) {
@@ -142,7 +119,6 @@
         reel.locked = !reel.locked;
         reel.lockBtn.textContent = reel.locked ? "Locked" : "Unlocked";
         reel.lockBtn.classList.toggle("active", reel.locked);
-        renderOutcome();
     }
 
     function isHidden(reel) {
@@ -167,7 +143,6 @@
         Promise.all(activeSpins).finally(() => {
             state.spinning = false;
             setDisabled(false);
-            renderOutcome();
         });
     }
 
@@ -215,6 +190,7 @@
         const payload = {
             savedAt: new Date().toISOString(),
             constraintsPlusOn: state.showConstraintsPlus,
+            note: els.ideationNote.value,
             cards: {},
         };
 
@@ -266,9 +242,7 @@
         dragging = false;
         try {
             els.lever.releasePointerCapture(event.pointerId);
-        } catch (error) {
-            // Ignore if pointer capture was released elsewhere.
-        }
+        } catch (error) {}
 
         if (currentAngle >= LEVER_TRIGGER) {
             spinAll();
@@ -281,8 +255,12 @@
         const extraReel = state.reels.find((reel) => reel.deck.id === "constraintsPlus");
         if (!extraReel) return;
         extraReel.reel.classList.toggle("hidden", !state.showConstraintsPlus);
-        renderOutcome();
     }
+
+    els.ideationNote.addEventListener("input", () => {
+        const len = els.ideationNote.value.length;
+        els.charCount.textContent = `${len} / 500`;
+    });
 
     els.constraintsPlusToggle.addEventListener("change", onConstraintsPlusToggle);
     els.spinButton.addEventListener("click", spinAll);
