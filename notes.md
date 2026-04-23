@@ -11,3 +11,5 @@ cards are misaligned, they should all be centered horizontally and vertically
 fix the arrow + ways to font styling
 
 title box w/ unlock/lock symbol combine they shouldnt be separate
+
+logo missing
