@@ -5,6 +5,7 @@
     --brass-light: #edd442;
     --paper-cream: #f2e6d0;
     --bulb-glow: #fff9e6;
+    --muted-blue: #2f4f6f;
 }
 
 * { box-sizing: border-box; }
@@ -35,7 +36,7 @@ body {
     background: var(--vintage-red);
     border-left: 8px solid var(--paper-cream);
     border-radius: 80px 0 0 80px;
-    clip-path: polygon(0% 0%, 80% 0%, 88% 5%, 96% 25%, 100% 50%, 96% 75%, 88% 95%, 80% 100%, 0% 100%);
+    clip-path: polygon(0% 15%, 2% 5%, 5% 1%, 10% 0%, 80% 0%, 88% 5%, 96% 25%, 100% 50%, 96% 75%, 88% 95%, 80% 100%, 10% 100%, 5% 99%, 2% 95%, 0% 85%);
     display: flex;
     align-items: center;
     padding-left: 60px;
@@ -70,11 +71,14 @@ body {
     z-index: 1;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+@keyframes pulse { 
+    0%, 100% { opacity: 0.3; } 
+    50% { opacity: 0.8; } 
+}
 
 .casino-shell {
     width: 100%;
-    background: #3d1a1a url('https://www.transparenttextures.com/patterns/dark-wood.png');
+    background: var(--vintage-red) url('https://www.transparenttextures.com/patterns/dark-wood.png');
     border: 10px solid var(--brass-dark);
     border-radius: 20px;
     padding: clamp(20px, 4vw, 40px);
@@ -85,57 +89,83 @@ body {
 
 .machine-grid {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 20px;
     justify-content: center;
+    align-items: flex-start;
 }
 
 .reel-bank {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
-    background: #000;
+    background: #0d1a26;
     padding: 20px;
     border: 4px solid var(--brass-dark);
     border-radius: 10px;
     flex: 1;
-    min-width: 300px;
+    min-width: 0;
     justify-content: center;
+    overflow: visible;
 }
 
 .reel-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex: 1 1 120px;
+    min-width: 100px;
+    max-width: 138px;
 }
 
 .reel-header {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     margin-bottom: 10px;
+    width: 100%;
 }
 
 .reel-title {
     font-family: "Impact", sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--brass-light);
     text-transform: uppercase;
     letter-spacing: 1px;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.lock-toggle {
-    background: #222;
-    color: var(--brass-light);
+.icon-btn {
+    background: #111;
+    color: var(--paper-cream);
     border: 1px solid var(--brass-dark);
     cursor: pointer;
-    font-size: 0.7rem;
-    padding: 2px 8px;
-    margin-top: 4px;
+    padding: 3px 4px;
     border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
 }
 
-.lock-toggle.active {
-    background: var(--vintage-red);
-    color: white;
+.icon-btn svg {
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: var(--paper-cream);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    display: block;
+}
+
+.icon-btn.active {
+    background: var(--muted-blue);
+    border-color: #7aaacc;
 }
 
 .window {
@@ -145,6 +175,10 @@ body {
     position: relative;
     overflow: hidden;
     border: 3px solid var(--brass-dark);
+}
+
+.window.hidden .strip {
+    visibility: hidden;
 }
 
 .window-overlay {
@@ -168,8 +202,8 @@ body {
 }
 
 .card {
-    height: clamp(100px, 14vw, 138px);
     width: 100%;
+    height: 138px;
     flex-shrink: 0;
     background: #dcd7c0;
     color: #1a1a1a;
@@ -194,7 +228,7 @@ body {
 .lever-stand {
     height: 240px;
     width: 60px;
-    background: #000;
+    background: #0d1a26;
     border: 4px solid var(--brass-dark);
     border-radius: 30px;
     position: relative;
@@ -236,18 +270,74 @@ body {
     box-shadow: 0 5px 0 var(--brass-dark);
 }
 
-.btn-spin:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--brass-dark); }
+.btn-spin:active { 
+    transform: translateY(3px); 
+    box-shadow: 0 2px 0 var(--brass-dark); 
+}
 
 .outcome-panel {
     margin-top: 30px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.outcome-panel input, .outcome-panel textarea {
+.outcome-panel input, 
+.outcome-panel textarea {
     width: 100%;
     background: #111;
     color: white;
     border: 1px solid var(--brass-dark);
     padding: 12px;
     font-family: monospace;
+}
+
+.btn-save {
+    background: var(--muted-blue);
+    color: var(--paper-cream);
+    border: 2px solid var(--brass-dark);
+    padding: 15px;
+    font-family: "Impact";
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 4px 0 #1c344a;
+}
+
+.btn-save:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #1c344a;
+}
+
+.saved-list {
+    margin-top: 40px;
+    width: 100%;
+    max-width: 1000px;
+}
+
+.save-item {
+    background: rgba(47, 79, 111, 0.25);
+    border-left: 4px solid var(--brass-light);
+    padding: 15px;
+    margin-bottom: 10px;
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 700px) {
+    .machine-grid { flex-wrap: wrap; }
+    .sidebar { width: 100%; flex-direction: row; justify-content: center; gap: 20px; }
+    .lever-stand { height: 80px; width: 200px; border-radius: 40px; }
+    .lever { width: 170px; height: 14px; bottom: auto; top: 50%; left: 16px; transform-origin: left center; transform: translateY(-50%); }
+    .lever-knob { top: 50%; left: auto; right: -22px; transform: translateY(-50%); }
+    .btn-spin { margin-top: 0; width: auto; padding: 16px 32px; }
+}
+
+@media (max-width: 520px) {
+    .reel-container { flex: 1 1 calc(50% - 15px); max-width: calc(50% - 8px); }
+}
+
+@media (max-width: 340px) {
+    .reel-container { flex: 1 1 100%; max-width: 100%; }
 }
