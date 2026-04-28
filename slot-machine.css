@@ -126,7 +126,7 @@ body {
 
 .reel-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 5px;
     margin-bottom: 10px;
     width: 100%;
@@ -139,7 +139,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
     flex: 1;
-    white-space: normal;
+    white-space: nowrap;
     text-shadow: 0 0 10px var(--brass-light);
 }
 
