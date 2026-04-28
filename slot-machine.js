@@ -11,7 +11,7 @@
         { id: "waysTo",   label: "Ways To",      values: deckData.waysTo          || ["Design", "Build", "Scale", "Fix", "Optimize"] },
         { id: "users",    label: "Users",         values: deckData.users           || ["Developers", "Designers", "Managers", "End-Users"] },
         { id: "limit",    label: "Design Limit",  values: deckData.designLimit     || ["Budget", "Timeframe", "Technology", "Usability"] },
-        { id: "audience", label: "Audience",      values: deckData.audienceLimit   || ["Enterprise", "Consumer", "Internal", "Global"] },
+        { id: "audience", label: "User Limit",      values: deckData.audienceLimit   || ["Enterprise", "Consumer", "Internal", "Global"] },
         { id: "extra",    label: "Constraints+",  values: deckData.constraintsPlus || ["Legacy Code", "Security", "Privacy", "AI Integration"] }
     ];
 
@@ -47,6 +47,9 @@
 
             const title = document.createElement("div");
             title.className = "reel-title";
+            if (deck.id === "extra") {
+                title.classList.add("bonus-title");
+            }
             title.textContent = deck.label;
 
             const eyeBtn = document.createElement("button");
@@ -143,13 +146,25 @@
             r.strip.style.transform = `translateY(${-finalPos * CARD_H}px)`;
 
             return new Promise(resolve => {
-                setTimeout(() => {
+                let finished = false;
+                const complete = () => {
+                    if (finished) return;
+                    finished = true;
                     r.overlay.style.opacity = "1";
                     r.strip.style.transition = "none";
                     r.strip.style.transform = `translateY(${-(MID_COPY * r.len + endIdx) * CARD_H}px)`;
                     r.currentIndex = endIdx;
                     resolve();
-                }, duration);
+                };
+
+                const onTransitionEnd = event => {
+                    if (event.propertyName !== "transform") return;
+                    r.strip.removeEventListener("transitionend", onTransitionEnd);
+                    complete();
+                };
+
+                r.strip.addEventListener("transitionend", onTransitionEnd);
+                setTimeout(complete, duration + 100);
             });
         });
 
